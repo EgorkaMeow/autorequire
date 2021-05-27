@@ -8,8 +8,15 @@ module.exports = function autorequire(_path){
 
     const files = fs.readdirSync(_path);
     for(let file of files){
-        let file_name = file.replace(path.extname(`${_path}/${file}`), '');
-        required_files[file_name] = require(`${_path}/${file}`);
+        let ext = path.extname(`${_path}/${file}`);
+        
+        if(
+            ext == '.js' && 
+            fs.readFileSync(`${_path}/${file}`, 'utf-8').indexOf('module.exports') !== -1
+        ){
+            let file_name = file.replace(ext, '');
+            required_files[file_name] = require(`${_path}/${file}`);
+        }
     }
 
     return required_files;
